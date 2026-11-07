@@ -1,5 +1,5 @@
 # A simple action usage
-name: Build Kernel
+name: Build Custom GKI Kernel
 on:
   workflow_dispatch:
 
@@ -15,16 +15,36 @@ jobs:
       - name: Build Kernel
         uses: dabao1955/kernel_build_action@main
         with:
-          kernel-url: https://github.com/AcmeUI-Devices/android_kernel_xiaomi_cas
-          kernel-dir: msm-4.19
-          kernel-branch: taffy
-          config: cas_defconfig
+          kernel-url: https://github.com/ramabondanp/android_kernel_common-5.10.git
+          kernel-dir: android12-5.10
+          kernel-branch: android12-5.10
+          config: gki_defconfig
           arch: arm64
           aosp-gcc: true
           aosp-clang: true
           ksu: true
           ksu-version: main
           android-version: 12
-          aosp-clang-version: r383902
+          aosp-clang-version: r416183b
           disable-lto: true
           anykernel3: true
+
+          
+          extra-cmd: |
+            echo "CONFIG_WIRELESS=y" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_CFG80211=y" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_MAC80211=y" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NET_OPERATOR=y" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_WLAN=y" >> arch/arm64/configs/gki_defconfig
+            
+            
+            echo "CONFIG_MT76XX_COMMON=m" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_MT7601U=m" >> arch/arm64/configs/gki_defconfig
+            
+            
+            echo "CONFIG_ATH_CARDS=m" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_ATH_COMMON=m" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_ATH9K_HW=m" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_ATH9K_COMMON=m" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_ATH9K_HTC=m" >> arch/arm64/configs/gki_defconfig
+            echo "CONFIG_CARL9170=m" >> arch/arm64/configs/gki_defconfig
