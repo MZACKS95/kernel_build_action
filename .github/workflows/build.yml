@@ -28,23 +28,4 @@ jobs:
           aosp-clang-version: r416183b
           disable-lto: true
           anykernel3: true
-
-          
-          extra-cmd: |
-            echo "CONFIG_WIRELESS=y" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_CFG80211=y" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_MAC80211=y" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_NET_OPERATOR=y" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_WLAN=y" >> arch/arm64/configs/gki_defconfig
-            
-            
-            echo "CONFIG_MT76XX_COMMON=m" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_MT7601U=m" >> arch/arm64/configs/gki_defconfig
-            
-            
-            echo "CONFIG_ATH_CARDS=m" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ATH_COMMON=m" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ATH9K_HW=m" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ATH9K_COMMON=m" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_ATH9K_HTC=m" >> arch/arm64/configs/gki_defconfig
-            echo "CONFIG_CARL9170=m" >> arch/arm64/configs/gki_defconfig
+        
