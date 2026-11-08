@@ -15,7 +15,7 @@ jobs:
       - name: Build Kernel
         uses: dabao1955/kernel_build_action@main
         with:
-          kernel-url: https://github.com/ramabondanp/android_kernel_common-5.10.git
+          kernel-url: https://github.com/MZACKS95/android_kernel_common-5.10.git
           kernel-dir: android12-5.10
           kernel-branch: android12-5.10
           config: gki_defconfig
