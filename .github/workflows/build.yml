@@ -28,4 +28,14 @@ jobs:
           aosp-clang-version: r416183b
           disable-lto: true
           anykernel3: true
-        
+      - name: Upload Kernel Modules (.ko)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nethunter-wifi-modules
+          path: |
+            android12-5.10/**/*.ko
+            **/mt7601u.ko
+            **/ath9k_htc.ko
+            **/carl9170.ko
+            **/mac80211.ko
+            **/cfg80211.ko
