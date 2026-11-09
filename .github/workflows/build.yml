@@ -1,37 +1,64 @@
-# A simple action usage
-name: Build Custom GKI Kernel
+name: Build AOSP 5.10.209 NetHunter Modules
 on:
   workflow_dispatch:
 
 jobs:
-  Build-Kernel:
-    strategy:
-      fail-fast: false
+  Build-Kernel-Modules:
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
-      - name: Build Kernel
+      - name: Clone Official AOSP 2024-05_r1 (5.10.209)
+        run: |
+          git clone --depth=1 --branch android12-5.10-2024-05_r1 https://android.googlesource.com/kernel/common android12-5.10
+
+      - name: Configure NetHunter Wi-Fi Modules (.ko)
+        run: |
+          DEFCONFIG="android12-5.10/arch/arm64/configs/gki_defconfig"
+          
+          # Hapus pemblokir vendor MediaTek & Atheros bawaan AOSP
+          sed -i '/CONFIG_WLAN_VENDOR_MEDIATEK/d' $DEFCONFIG
+          sed -i '/CONFIG_WLAN_VENDOR_ATH/d' $DEFCONFIG
+
+          # Aktifkan subsistem mac80211 & driver USB Wi-Fi sebagai modul (.ko)
+          cat << 'EOF' >> $DEFCONFIG
+          CONFIG_WIRELESS=y
+          CONFIG_CFG80211=m
+          CONFIG_CFG80211_WEXT=y
+          CONFIG_MAC80211=m
+          CONFIG_MAC80211_MESH=y
+          CONFIG_MAC80211_DEBUGFS=y
+          CONFIG_WLAN=y
+          CONFIG_WLAN_VENDOR_MEDIATEK=y
+          CONFIG_MT7601U=m
+          CONFIG_WLAN_VENDOR_ATH=y
+          CONFIG_ATH_CARDS=m
+          CONFIG_ATH_COMMON=m
+          CONFIG_ATH9K_HW=m
+          CONFIG_ATH9K_COMMON=m
+          CONFIG_ATH9K_HTC=m
+          CONFIG_CARL9170=m
+          EOF
+
+      - name: Build Modules Only
         uses: dabao1955/kernel_build_action@main
         with:
-          kernel-url: https://github.com/MZACKS95/android_kernel_common-5.10.git
           kernel-dir: android12-5.10
-          kernel-branch: android12-5.10
           config: gki_defconfig
           arch: arm64
           aosp-gcc: true
           aosp-clang: true
-          ksu: true
-          ksu-version: main
+          ksu: false
           android-version: 12
           aosp-clang-version: r416183b
-          disable-lto: true
-          anykernel3: true
+          disable-lto: false
+          anykernel3: false
+
       - name: Upload Kernel Modules (.ko)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
-          name: nethunter-wifi-modules
+          name: aosp-5.10.209-nethunter-modules
           path: |
             android12-5.10/**/*.ko
             **/mt7601u.ko
