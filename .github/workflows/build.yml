@@ -9,42 +9,12 @@ jobs:
       contents: read
 
     steps:
-      - name: Clone Official AOSP 2024-05_r1 (5.10.209)
-        run: |
-          git clone --depth=1 --branch android12-5.10-2024-05_r1 https://android.googlesource.com/kernel/common android12-5.10
-
-      - name: Configure NetHunter Wi-Fi Modules (.ko)
-        run: |
-          DEFCONFIG="android12-5.10/arch/arm64/configs/gki_defconfig"
-          
-          # Hapus pemblokir vendor MediaTek & Atheros bawaan AOSP
-          sed -i '/CONFIG_WLAN_VENDOR_MEDIATEK/d' $DEFCONFIG
-          sed -i '/CONFIG_WLAN_VENDOR_ATH/d' $DEFCONFIG
-
-          # Aktifkan subsistem mac80211 & driver USB Wi-Fi sebagai modul (.ko)
-          cat << 'EOF' >> $DEFCONFIG
-          CONFIG_WIRELESS=y
-          CONFIG_CFG80211=m
-          CONFIG_CFG80211_WEXT=y
-          CONFIG_MAC80211=m
-          CONFIG_MAC80211_MESH=y
-          CONFIG_MAC80211_DEBUGFS=y
-          CONFIG_WLAN=y
-          CONFIG_WLAN_VENDOR_MEDIATEK=y
-          CONFIG_MT7601U=m
-          CONFIG_WLAN_VENDOR_ATH=y
-          CONFIG_ATH_CARDS=m
-          CONFIG_ATH_COMMON=m
-          CONFIG_ATH9K_HW=m
-          CONFIG_ATH9K_COMMON=m
-          CONFIG_ATH9K_HTC=m
-          CONFIG_CARL9170=m
-          EOF
-
       - name: Build Modules Only
         uses: dabao1955/kernel_build_action@main
         with:
+          kernel-url: https://android.googlesource.com/kernel/common
           kernel-dir: android12-5.10
+          kernel-branch: android12-5.10-2024-05_r1
           config: gki_defconfig
           arch: arm64
           aosp-gcc: true
@@ -54,6 +24,27 @@ jobs:
           aosp-clang-version: r416183b
           disable-lto: false
           anykernel3: false
+          extra-cmd: |
+            sed -i '/CONFIG_WLAN_VENDOR_MEDIATEK/d' arch/arm64/configs/gki_defconfig
+            sed -i '/CONFIG_WLAN_VENDOR_ATH/d' arch/arm64/configs/gki_defconfig
+            cat << 'EOF' >> arch/arm64/configs/gki_defconfig
+            CONFIG_WIRELESS=y
+            CONFIG_CFG80211=m
+            CONFIG_CFG80211_WEXT=y
+            CONFIG_MAC80211=m
+            CONFIG_MAC80211_MESH=y
+            CONFIG_MAC80211_DEBUGFS=y
+            CONFIG_WLAN=y
+            CONFIG_WLAN_VENDOR_MEDIATEK=y
+            CONFIG_MT7601U=m
+            CONFIG_WLAN_VENDOR_ATH=y
+            CONFIG_ATH_CARDS=m
+            CONFIG_ATH_COMMON=m
+            CONFIG_ATH9K_HW=m
+            CONFIG_ATH9K_COMMON=m
+            CONFIG_ATH9K_HTC=m
+            CONFIG_CARL9170=m
+            EOF
 
       - name: Upload Kernel Modules (.ko)
         uses: actions/upload-artifact@v5
